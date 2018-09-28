@@ -1,36 +1,34 @@
-# [Start Bootstrap](http://startbootstrap.com/) - [SB Admin 2](http://startbootstrap.com/template-overviews/sb-admin-2/)
-[![CDNJS](https://img.shields.io/cdnjs/v/startbootstrap-sb-admin-2.svg)](https://cdnjs.com/libraries/startbootstrap-sb-admin-2)
+# [Lambda와 Rekognition을 이용한 대량의 이미지 분석](http://reko.awsdemokr.com/)
 
-[SB Admin 2](http://startbootstrap.com/template-overviews/sb-admin-2/) is an open source, admin dashboard template for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/).
+동영상에 포함되어 있는 다양한 정보를 쉽고 빠르게 분석하는 솔루션을 구축할 수 있습니다.
+VOD 동영상을 [S3](https://aws.amazon.com/ko/s3/)에 업로드하면, [Lambda](https://aws.amazon.com/ko/lambda/)에서 [Elemental MediaConvert](https://aws.amazon.com/ko/mediaconvert/)를 호출하여 대량의 이미지로 분할하여 [S3](https://aws.amazon.com/ko/s3/)에 저장합니다. 대량의 이미지는 [Lambda](https://aws.amazon.com/ko/lambda/)를 활용하여 [Rekognition](https://aws.amazon.com/ko/rekognition/) 서비스를 호출하여 이미지 정보를 수집합니다. 수집 결과물은 [ElasticSearch](https://aws.amazon.com/ko/elasticsearch-service/)에 저장하고 Kibana를 통해 시각화 할 수 있습니다.
 
-## Getting Started
+## 아키텍처 다이어그램
+해당 다이어그램은 미완성 입니다. (2018-10-30 완료 예정)
+![Reko 아키텍처 다이어그램](https://github.com/studydev/reko/raw/master/img/reko_architecture.png)
 
-To begin using this template, choose one of the following options to get started:
-* [Download the latest release on Start Bootstrap](http://startbootstrap.com/template-overviews/sb-admin-2/)
-* Clone the repo: `git clone https://github.com/BlackrockDigital/startbootstrap-sb-admin-2.git`
+
+## 시작하기
+
+이 템플릿을 시작하기 위해서는 다음과 같은 순서로 진행합니다:
+* [최신 버전의 git repo 다운로드 받기](https://github.com/studydev/reko)
+* Clone the repo: `git clone https://github.com/studydev/reko.git`
 * Fork the repo
 
-## Using the Source Files
+## 실습 순서
 
-After cloning the repo take a look at the `gulpfile.js` and check out the tasks available:
-* `gulp` The default task will compile the LESS and JS into the `dist` directory and minify the output, and it will copy all vendor libraries from `bower_components` into the `vendor` directory
-* `gulp dev` The dev task will serve up a local version of the template and will watch the LESS, JS, and HTML files for changes and reload the browser windo automatically
+실습은 다음과 같은 순서로 진행합니다.: (상세 실습 가이드는 업데이트 예정)
+1. 동영상을 다운로드 받습니다.
+1. VOD와 이미지를 저장하기 위한 S3 버켓을 생성합니다.
+1. 비디오 파일을 업로드하면 이미지로 만들기 위한 Lambda 함수를 생성합니다.
+1. Elemental MediaConverter를 통해서 이미지로 변환합니다.
+1. 이미지 작업이 완료되면 CloudWatch Event에 의해서 Lambda 함수가 호출되고 리스팅된 이미지 정보를 S3에 저장합니다. (SNS 하나 등록하는 것 고민 or Step Function)
+1. Lambda 함수에 의해서 Rekognition을 호출하고 DetectedText를 통해서 이미지를 분석한 정보를 ElasticSearch에 넣습니다.
+1. 정적 웹 호스팅을 하는 S3 버킷을 통해서 ES에 들어있는 정보를 쿼리하고, 화면에 특정 Text에 대한 수집 이미지를 표시합니다.
+1. 영상 슬라이스 Lambda를 통해서 특정 사람이 지나간 구간의 영상을 짜르는 기능을 수행합니다.
 
-To update dependencies, run `bower update` and then run `gulp copy` to copy the updated dependencies into the `vendor` directory
-
-## Bugs and Issues
-
-Have a bug or an issue with this template? [Open a new issue](https://github.com/BlackrockDigital/startbootstrap-sb-admin-2/issues) here on GitHub or leave a comment on the [template overview page at Start Bootstrap](http://startbootstrap.com/template-overviews/sb-admin-2/).
-
-## Creator
-
-Start Bootstrap was created by and is maintained by **[David Miller](http://davidmiller.io/)**, Owner of [Blackrock Digital](http://blackrockdigital.io/).
-
-* https://twitter.com/davidmillerskt
-* https://github.com/davidtmiller
-
-Start Bootstrap is based on the [Bootstrap](http://getbootstrap.com/) framework created by [Mark Otto](https://twitter.com/mdo) and [Jacob Thorton](https://twitter.com/fat).
+## History 관리
+여기는 주요 변경 사항을 기록합니다.
 
 ## Copyright and License
-
-Copyright 2013-2018 Blackrock Digital LLC. Code released under the [MIT](https://github.com/BlackrockDigital/startbootstrap-sb-admin-2/blob/gh-pages/LICENSE) license.
+2018 저작권 관련 정보 

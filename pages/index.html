@@ -187,10 +187,14 @@
 
         // Initialize Datatable
         var table;
+        var cz = 1;
         $(document).ready(function() {
             table = $('#marathon-table').DataTable({
                 responsive: true,
-                "paging": false
+                "paging": false,
+                "columnDefs": [
+                    { "width": "80%", "targets": 3 }
+                ]
             });
             search_person_number();
         });
@@ -261,13 +265,12 @@
                                 // recv_data._source.VideoLength,
                                 // recv_data._source.AssetId,
                                 // "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><img id='image_"+i+"'src='"+recv_data._source.ImageUrl+"' class='img-fluid img-thumbnail' /></a>",
-                                "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><canvas id='myCanvas_"+i+"' width='640' height='360' >Your browser does not support the HTML5 canvas tag.</canvas></a>",
+                                "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><canvas id='myCanvas_"+i+"' width='"+(1280*cz)+"' height="+(720*cz)+" >Your browser does not support the HTML5 canvas tag.</canvas></a>",
                             ]
                         ).draw();
                     });
                     // table.draw();
                     
-
                 })
                 .fail(function( data ) {
                     console.log(data);
@@ -279,8 +282,8 @@
             var img = new Image();
             img.onload = function(){
                 console.log( this.width+' '+ this.height );
-                var rx = this.width*0.5;
-                var ry = this.height*0.5;
+                var rx = this.width*cz;
+                var ry = this.height*cz;
                 var c=document.getElementById("myCanvas_"+i);
                 var ctx=c.getContext("2d");
                 ctx.drawImage(img,0,0, rx, ry);

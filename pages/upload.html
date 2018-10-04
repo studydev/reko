@@ -85,7 +85,7 @@
                             <div class="input-group custom-search-form">
                                 <input id="person_number" type="text" class="form-control" placeholder="참가자 번호 입력..." value="7142">
                                 <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" onclick="search_person_number()">
+                                <button class="btn btn-default" type="button" onclick="search_video_info()">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
@@ -111,7 +111,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">마라토너 참가자 정보 확인 테이블</h1>
+                    <h1 class="page-header">업로드 동영상 정보</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -120,16 +120,17 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div id="id_name" class="panel-heading">
-                            마라톤 참가자 번호
+                            업로드 동영상 정보
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <table width="100%" class="table table-striped table-bordered table-hover" id="marathon-table">
                                 <thead>
                                     <tr>
-                                        <th>참가자</th>
+                                        <th>이미지</th>
                                         <th>파일명</th>
-                                        <th>시간</th>
+                                        <th>길이</th>
+                                        <th>저장위치</th>
                                         <!-- <th>Confidence</th>
                                         <th>DetectId</th>
                                         <th>Left</th>
@@ -139,7 +140,7 @@
                                         <th>VideoLength</th>
                                         <th>AssetId</th>
                                         <th>ImageUrl</th> -->
-                                        <th>이미지</th>
+                                        
                                     </tr>
                                 </thead>
                                 <!-- <tbody>
@@ -197,123 +198,93 @@
         $(document).ready(function() {
             table = $('#marathon-table').DataTable({
                 responsive: true,
-                "paging": false,
-                "columnDefs": [
-                    { "width": "70px", "targets": 0 },
-                    { "width": "70px", "targets": 1 },
-                    { "width": "50px", "targets": 2 }
-                ]
+                "aaSorting": [[1,'asc']]
             });
-            search_person_number();
+            search_video_info();
         });
     </script>
 
     <script>
         // Search number
-        function search_person_number() {
-            var data = {
-                "from" : 0,
-                "size" : 10000,
-                "query": {
-                    "bool": {
-                    "must": {
-                        "match": {
-                        "DetectedText":$("#person_number").val()
-                        }
-                    },
+        var vod_data = {
+            "from" : 0,
+            "size" : 1,
+            "query": {
+                "bool": {
                     "filter": {
                         "range": {
-                        "Confidence": {
-                            "gte": 80,
-                            "lte": 100
-                        }
-                        }
-                    }
-                    }
-                },
-                "sort": [
-                    {
-                        "_index": {
-                        "order": "asc"
-                        },
-                        "Sourceframe": {
-                        "order": "asc"
+                            "Sourceframe": {
+                                "gte": 0,
+                                "lte": 1000
+                            }
                         }
                     }
-                ]
-            }
-            $("#id_name").text($("#person_number").val()+ "번 사람에 대한 검색 정보");
-
-            $.ajax({
-                method: "POST",
-                url: "https://search-video-rekogition-lzqkfoncjwha4z4l5vlp3t2qde.ap-northeast-2.es.amazonaws.com/_search?pretty=true",
-                crossDomain: true,  
-                async: false,
-                data: JSON.stringify(data),
-                dataType : 'json',
-                contentType: 'application/json',
-                })
-                .done(function( data ) {
-                    table.clear();
-                    $.each(data.hits.hits, function(i, recv_data) {
-                        console.log(recv_data._source);
-
-                        drawImage(i, recv_data._source.ImageUrl, recv_data._source.Left, recv_data._source.Top, recv_data._source.Width, recv_data._source.Height, recv_data._source.DetectedText+" ("+ (Math.round( recv_data._source.Confidence * 100)/100) +"%)");
-                        table.row.add(
-                            [
-                                recv_data._source.DetectedText,
-                                recv_data._index,
-                                recv_data._source.Sourceframe,
-                                // Math.round( recv_data._source.Confidence * 100) / 100,
-                                // recv_data._source.DetectId,
-                                // Math.round( recv_data._source.Left * 100) / 100,
-                                // Math.round( recv_data._source.Top * 100) / 100,
-                                // Math.round( recv_data._source.Width * 100) / 100,
-                                // Math.round( recv_data._source.Height * 100) / 100,
-                                // recv_data._source.VideoLength,
-                                // recv_data._source.AssetId,
-                                // "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><img id='image_"+i+"'src='"+recv_data._source.ImageUrl+"' class='img-fluid img-thumbnail' /></a>",
-                                "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><canvas id='myCanvas_"+i+"' width='"+(1280*cz)+"' height="+(720*cz)+" >Your browser does not support the HTML5 canvas tag.</canvas></a>",
-                            ]
-                        ).draw();
-                    });
-                    // table.draw();
-                    
-                })
-                .fail(function( data ) {
-                    console.log(data);
-                });
-            }
-        
-        // draw rectangle for person information over canvas
-        function drawImage(i, url, x, y, w, h, text){   
-            var img = new Image();
-            img.onload = function(){
-                console.log( this.width+' '+ this.height );
-                var rx = this.width*cz;
-                var ry = this.height*cz;
-                var c=document.getElementById("myCanvas_"+i);
-                var ctx=c.getContext("2d");
-                ctx.drawImage(img,0,0, rx, ry);
-
-                ctx.font = "bold " + (36*cz) + "px Arial";
-                ctx.fillStyle = "orange";
-                ctx.fillText(text, rx*x-3, ry*y-10);
-
-                var canvas = document.getElementById("myCanvas_"+i);
-                var context = canvas.getContext('2d');
-                
-                context.beginPath();
-                context.rect(rx*x-3, ry*y-3, rx*w+9, ry*h+9);
-                context.lineWidth = 6;
-                context.strokeStyle = 'red';
-                context.stroke();
-            };
-            img.src = url;
+                }
+            },
+            "sort": [
+                {
+                    "Sourceframe": {
+                    "order": "asc"
+                    }
+                }
+            ]
         }
 
-        
+        function search_video_info() {
+            $.ajax({
+                method: "GET",
+                url: "https://search-video-rekogition-lzqkfoncjwha4z4l5vlp3t2qde.ap-northeast-2.es.amazonaws.com/_all",
+                crossDomain: true,  
+                async: true,
+                dataType : 'json',
+                contentType: 'application/json',
+            }).done(function( data ) {
+                console.log(data);
+                table.clear();
+                $.each(data, function(i, recv_data) {
+                    if (i === ".kibana") {
+                        return true;
+                    }
 
+                    $.ajax({
+                        method: "POST",
+                        url: "https://search-video-rekogition-lzqkfoncjwha4z4l5vlp3t2qde.ap-northeast-2.es.amazonaws.com/"+i+"/_search",
+                        crossDomain: true,  
+                        async: true,
+                        data: JSON.stringify(vod_data),
+                        dataType : 'json',
+                        contentType: 'application/json',
+                    }).done(function( image_info ) {
+                        console.log(image_info);
+
+                        $.each(image_info.hits.hits, function(i, recv_data) {
+                            console.log(recv_data._source);
+
+                            table.row.add(
+                                [
+                                    "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><img id='image_"+i+"'src='"+recv_data._source.ImageUrl+"' class='img-thumbnail' /></a>",
+                                    recv_data._index,
+                                    recv_data._source.VideoLength,
+                                    recv_data._source.SourceVid
+                                    // Math.round( recv_data._source.Confidence * 100) / 100,
+                                    // recv_data._source.DetectId,
+                                    // Math.round( recv_data._source.Left * 100) / 100,
+                                    // Math.round( recv_data._source.Top * 100) / 100,
+                                    // Math.round( recv_data._source.Width * 100) / 100,
+                                    // Math.round( recv_data._source.Height * 100) / 100,
+                                    // recv_data._source.VideoLength,
+                                    // recv_data._source.AssetId                                    
+                                ]
+                            ).draw();
+                        });
+                    });                    
+
+                });
+                    // table.draw();
+            }).fail(function( data ) {
+                console.log(data);
+            });
+        }
     </script>
     
 </body>

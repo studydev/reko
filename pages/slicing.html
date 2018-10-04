@@ -90,7 +90,7 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="upload.html"><i class="fa fa-cloud-upload fa-fw"></i> VOD 업로드</a>
+                            <a href="upload.html"><i class="fa fa-cloud-upload fa-fw"></i> 업로드 동영상</a>
                         </li>
                         <li>
                             <a href="index.html"><i class="fa fa-image fa-fw"></i> 인식 이미지</a>
@@ -175,6 +175,7 @@
             var user_data = {
                 "UserNumber" : $("#person_number").val()
             }
+            $("#id_name").text($("#person_number").val()+ "번 사람에 대한 검색 정보");
 
             $.ajax({
                 method: "POST",

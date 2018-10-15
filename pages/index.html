@@ -246,7 +246,7 @@
 
             $.ajax({
                 method: "POST",
-                url: "https://search-video-rekogition-lzqkfoncjwha4z4l5vlp3t2qde.ap-northeast-2.es.amazonaws.com/_search",
+                url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/_search",
                 crossDomain: true,  
                 async: true,
                 data: JSON.stringify(data),
@@ -262,7 +262,9 @@
                     $.each(data.hits.hits, function(i, recv_data) {
                         console.log(recv_data._source);
 
-                        drawImage(i, recv_data._source.ImageUrl, recv_data._source.Left, recv_data._source.Top, recv_data._source.Width, recv_data._source.Height, recv_data._source.DetectedText+" ("+ (Math.round( recv_data._source.Confidence * 100)/100) +"%)");
+                        image_url = recv_data._source.ImageUrl;
+                        drawImage(i, image_url, recv_data._source.Left, recv_data._source.Top, recv_data._source.Width, recv_data._source.Height, recv_data._source.DetectedText+" ("+ (Math.round( recv_data._source.Confidence * 100)/100) +"%)");
+
                         table.row.add(
                             [
                                 recv_data._source.DetectedText,
@@ -277,7 +279,7 @@
                                 // recv_data._source.VideoLength,
                                 // recv_data._source.AssetId,
                                 // "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><img id='image_"+i+"'src='"+recv_data._source.ImageUrl+"' class='img-fluid img-thumbnail' /></a>",
-                                "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><canvas id='myCanvas_"+i+"' width='"+(1280*cz)+"' height="+(720*cz)+" >Your browser does not support the HTML5 canvas tag.</canvas></a>",
+                                "<a href='"+image_url+"' target='_blank'><canvas id='myCanvas_"+i+"' width='"+(1280*cz)+"' height="+(720*cz)+" >Your browser does not support the HTML5 canvas tag.</canvas></a>",
                             ]
                         );
                     });

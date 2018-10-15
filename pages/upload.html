@@ -233,11 +233,9 @@
         function search_video_info() {
             $.ajax({
                 method: "GET",
-                url: "https://search-video-rekogition-lzqkfoncjwha4z4l5vlp3t2qde.ap-northeast-2.es.amazonaws.com/_all",
+                url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/_all",
                 crossDomain: true,  
-                async: true,
-                dataType : 'json',
-                contentType: 'application/json',
+                async: true
             }).done(function( data ) {
                 console.log(data);
                 table.clear();
@@ -248,7 +246,7 @@
 
                     $.ajax({
                         method: "POST",
-                        url: "https://search-video-rekogition-lzqkfoncjwha4z4l5vlp3t2qde.ap-northeast-2.es.amazonaws.com/"+i+"/_search",
+                        url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/"+i+"/_search",
                         crossDomain: true,  
                         async: true,
                         data: JSON.stringify(vod_data),
@@ -259,7 +257,6 @@
 
                         $.each(image_info.hits.hits, function(i, recv_data) {
                             console.log(recv_data._source);
-
                             table.row.add(
                                 [
                                     "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><img id='image_"+i+"'src='"+recv_data._source.ImageUrl+"' class='img-thumbnail' /></a>",

@@ -172,30 +172,24 @@
 
     <script>
         function search_slicing_video_info() {
-            var user_data = {
-                "UserNumber" : $("#person_number").val()
-            }
             $("#id_name").text($("#person_number").val()+ "번 사람에 대한 검색 정보");
 
             $.ajax({
-                method: "POST",
-                url: "https://98i3l1lrt1.execute-api.ap-northeast-2.amazonaws.com/staging/chk",
-                crossDomain: true,  
-                async: true,
-                data: JSON.stringify(user_data),
-                dataType : 'json',
-                contentType: 'application/json',
+                method: "GET",
+                url: "https://jm3vl4r2kf.execute-api.ap-northeast-1.amazonaws.com/dev?UserNumber="+$("#person_number").val(),
+                crossDomain: true,
+                async: true
             }).done(function( data ) {
                 console.log(data);
                 var elem_body = $(".panel-body");
                 elem_body.empty();
                 
                 if ( data.statusCode === 200 ) {
-                    var recv_data = data.body.response;
-                    $.each(recv_data, function(i, value) {
+                    var recv_data = data.body;
+                    $.each(recv_data.file_name, function(i, value) {
                         var new_elem = "<h3>" + i + "번째 슬라이싱 동영상</h3>\
                             <video id='my-video-" + i + "' controls preload='auto' width='640' height='360' data-setup='{}'>\
-                                <source src='" + value.replace("s3://", "https://s3.ap-northeast-2.amazonaws.com/") + "' type='video/mp4'>\
+                                <source src='https://s3." + recv_data.region_name + ".amazonaws.com/" + recv_data.bucket_name + "/" + value + "' type='video/mp4'>\
                                 <p class='vjs-no-js'>To view this video please enable JavaScript, and consider upgrading to a web browser that<a href='https://videojs.com/html5-video-support/' target='_blank'>supports HTML5 video</a>\
                                 </p>\
                             </video>";
@@ -204,6 +198,7 @@
                 }
                 else if ( data.statusCode === 404 ) {
                     search_person_number();
+                    console.log("no person");
                 }
                 
             }).fail(function( data ) {
@@ -247,7 +242,7 @@
 
             $.ajax({
                 method: "POST",
-                url: "https://search-video-rekogition-lzqkfoncjwha4z4l5vlp3t2qde.ap-northeast-2.es.amazonaws.com/_search",
+                url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/_search",
                 crossDomain: true,  
                 async: true,
                 data: JSON.stringify(data),
@@ -274,7 +269,7 @@
 
             $.ajax({
                 method: "POST",
-                url: "https://98i3l1lrt1.execute-api.ap-northeast-2.amazonaws.com/staging/slc",
+                url: "https://jm3vl4r2kf.execute-api.ap-northeast-1.amazonaws.com/dev",
                 crossDomain: true,
                 async: true,
                 data: JSON.stringify(user_data),

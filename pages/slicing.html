@@ -217,7 +217,7 @@
                     "bool": {
                         "must": {
                             "match": {
-                                "DetectedText":$("#person_number").val()
+                                "DetectedText":$("#person_number").val().toString()
                             }
                         },
                         "filter": {
@@ -282,7 +282,8 @@
                 console.log(data);
                 search_slicing_video_info();
             }).fail(function( data ) {
-                console.log(data);                
+                console.log(data);
+                setTimeout(search_slicing_video_info(), 5);
             });
         }
     </script>

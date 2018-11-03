@@ -1,5 +1,5 @@
-var ESEndPointURL = "";
-var APIGatewayURL = "";
+var ESEndPointURL = "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com";
+var APIGatewayURL = "https://jm3vl4r2kf.execute-api.ap-northeast-1.amazonaws.com/dev";
 
 var table;
 var cz = 0.5;
@@ -8,7 +8,7 @@ var image_info = [];
 var image_index = 0;
 var image_length = 0;
 var player_timer;
-var elem_body = $(".panel-body");
+var elem_body;
 
 // videos information parameters using elasticsearch
 var es_vod_search_filter = {
@@ -83,9 +83,11 @@ function search_person_number() {
         data: JSON.stringify(get_es_search_filter(80, 100)),
         dataType : 'json',
         contentType: 'application/json',
-    })
-    .done(done_search_person_number(data))
-    .fail(fail_search_person_number(data));
+    }).done(function(data) {
+        done_search_person_number(data);
+    }).fail(function(data) {
+        fail_search_person_number(data);
+    });
 }
 
 function done_search_person_number( data ) {
@@ -150,9 +152,11 @@ function search_video_info() {
         url: ESEndPointURL + "/_all",
         crossDomain: true,
         async: true
-    })
-    .done(done_search_video_info(data))
-    .fail(fail_search_video_info(data));
+    }).done(function(data) {
+        done_search_video_info(data);
+    }).fail(function(data) {
+        fail_search_video_info(data);
+    });
 }
 
 function done_search_video_info(data) {
@@ -195,6 +199,7 @@ function fail_search_video_info(data) {
 
 // Crop the video for specific user
 function search_crop_video_info() {
+    elem_body = $(".panel-body");
     seach_number = $("#person_number").val().toString();
     $("#id_name").text( seach_number + "번 사람에 대한 검색 정보");
     elem_body.empty();
@@ -205,9 +210,11 @@ function search_crop_video_info() {
         crossDomain: true,
         async: true,
         contentType: 'application/json'
-    })
-    .done(done_search_crop_video_info(data))
-    .fail(fail_search_crop_video_info(data));
+    }).done(function(data) {
+        done_search_crop_video_info(data);
+    }).fail(function(data) {
+        fail_search_crop_video_info(data);
+    });
 }
 
 function done_search_crop_video_info(data) {
@@ -234,13 +241,14 @@ function fail_search_crop_video_info(data) {
 }
 
 function search_crop_video() {
+    elem_body = $(".panel-body");
     seach_number = $("#person_number").val().toString();
     $.ajax({
         method: "POST",
         url: ESEndPointURL + "/_search",
         crossDomain: true,  
         async: true,
-        data: JSON.stringify(data),
+        data: JSON.stringify(get_es_search_filter(80, 100)),
         dataType : 'json',
         contentType: 'application/json'
     }).done(function( data ) {
@@ -257,6 +265,7 @@ function search_crop_video() {
 }
 
 function request_crop(request_number) {
+    elem_body = $(".panel-body");
     elem_body.empty();
     var user_data = {
         "UserNumber" : request_number
@@ -314,6 +323,7 @@ function search_animation_person_number() {
 
 // draw rectangle for person information over canvas
 function drawAnimationImage(i) {
+    cz_re = 1;
     url = image_info[i].ImageUrl;
     x = image_info[i].Left;
     y = image_info[i].Top;
@@ -323,12 +333,12 @@ function drawAnimationImage(i) {
 
     var img = new Image();
     img.onload = function() {
-        var rx = this.width*cz;
-        var ry = this.height*cz;
+        var rx = this.width*cz_re;
+        var ry = this.height*cz_re;
         var canvas=document.getElementById("myCanvas");
         var context=canvas.getContext("2d");
         context.drawImage(img,0,0, rx, ry);
-        context.font = "bold " + (36*cz) + "px Arial";
+        context.font = "bold " + (36*cz_re) + "px Arial";
         context.fillStyle = "orange";
         context.fillText(text, rx*x-3, ry*y-10);
         context.beginPath();

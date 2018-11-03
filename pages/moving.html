@@ -173,158 +173,18 @@
     <!-- Custom Theme JavaScript -->
     <script src="../dist/js/sb-admin-2.js"></script>
 
+    <!-- Reko Demo JavaScript -->
+    <script src="../js/reko-script.js"></script>
+
+
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
         // Initialize
-        var cz = 1;
-        var image_info = [];
-        var image_index = 0;
-        var image_length = 0;
-        var elem_body = $(".panel-body");
-        var esendpoint = "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/"
-        var player_timer;
-
         $(document).ready(function() {
-            search_person_number();
+            search_animation_person_number();
         });
     </script>
 
-    <script>
-        // Search number
-        function search_person_number() {
-            var data = {
-                "from" : 0,
-                "size" : 10000,
-                "query": {
-                    "bool": {
-                        "must": {
-                            "match": {
-                                "DetectedText":$("#person_number").val()
-                            }
-                        },
-                        "filter": {
-                            "range": {
-                                "Confidence": {
-                                    "gte": 70,
-                                    "lte": 100
-                                }
-                            }
-                        }
-                    }
-                },
-                "sort": [
-                    {
-                        "_index": {
-                            "order": "asc"
-                        },
-                        "Sourceframe": {
-                            "order": "asc"
-                        }
-                    }
-                ]
-            }
-            $("#id_name").text($("#person_number").val()+ "번 사람에 대한 검색 정보");
-
-            $.ajax({
-                method: "POST",
-                url: esendpoint + "_search",
-                crossDomain: true,  
-                async: true,
-                data: JSON.stringify(data),
-                dataType : 'json',
-                contentType: 'application/json',
-            }).done(function( data ) {
-                if (data.hits.total === 0) {
-                    console.log(data);
-                }
-                else {
-                    video_length = data.hits.hits.length;
-                    image_info = [];
-                    $.each(data.hits.hits, function(i, recv_data) {
-                        image_info[i] = recv_data._source;
-                    });
-                    image_length = image_info.length;
-                    console.log(image_info);
-                    console.log(image_length);
-                    drawImage(0);
-                }
-            }).fail(function( data ) {
-                console.log(data);
-            });
-        }
-        
-        // draw rectangle for person information over canvas
-        function drawImage(i) {
-            url = image_info[i].ImageUrl;
-            x = image_info[i].Left;
-            y = image_info[i].Top;
-            w = image_info[i].Width;
-            h = image_info[i].Height;
-            text = image_info[i].DetectedText + " ("+ (Math.round( image_info[i].Confidence * 100)/100) +"%)";
-
-            var img = new Image();
-            img.onload = function() {
-                var rx = this.width*cz;
-                var ry = this.height*cz;
-                var canvas=document.getElementById("myCanvas");
-                var context=canvas.getContext("2d");
-                context.drawImage(img,0,0, rx, ry);
-                context.font = "bold " + (36*cz) + "px Arial";
-                context.fillStyle = "orange";
-                context.fillText(text, rx*x-3, ry*y-10);
-                context.beginPath();
-                context.rect(rx*x-3, ry*y-3, rx*w+9, ry*h+9);
-                context.lineWidth = 6;
-                context.strokeStyle = 'red';
-                context.stroke();
-            };
-
-            img.src = url;
-            console.log(i + "번째 이미지 ");
-        }
-
-        // 이미지 파일들을 재생하는 로직
-        function image_play_forward() {
-            // 기존 재생중인 타어미가 있을 경우 제거
-            remove_image_timer();
-            player_timer = setInterval(image_step_forward, $("#timer_ms").val());
-            $("#bt_play").addClass('disabled');
-            $("#bt_stop").removeClass('disabled');
-        }
-
-        // 이미지 파일들을 역재생하는 로직
-        // function image_play_backward() {
-        // }
-
-        // 이미지 파일들을 멈추는 로직
-        function image_stop() {
-            remove_image_timer();
-            $("#bt_stop").addClass('disabled');
-            $("#bt_play").removeClass('disabled');
-        }
-
-        // 다음 이미지 파일
-        function image_step_forward() {
-            if (++image_index >= image_length) {
-                image_index = 0;
-            }
-            drawImage(image_index);
-        }
-
-        // 이전 이미지 파일
-        function image_step_backward() {
-            if (--image_index < 0) {
-                image_index = image_length - 1;
-            }
-            drawImage(image_index);
-        }
-
-        // 반복 타이머 제거
-        function remove_image_timer() {
-            clearInterval(player_timer);
-        }
-
-    </script>
 </body>
 
 </html>

@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -165,129 +163,15 @@
     <!-- <script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script> -->
     <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
 
+    <!-- Reko Demo JavaScript -->
+    <script src="../js/reko-script.js"></script>
+
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
-        var api_url = "https://6yst69szgk.execute-api.ap-northeast-1.amazonaws.com/stage";
-        var elem_body = $(".panel-body");
-
         $(document).ready(function() {
-            search_slicing_video_info();
+            search_crop_video_info();
         });
     </script>
-
-    <script>
-        function search_slicing_video_info() {
-            $("#id_name").text($("#person_number").val()+ "번 사람에 대한 검색 정보");
-            elem_body.empty();
-
-            $.ajax({
-                method: "GET",
-                url: api_url + "?UserNumber="+$("#person_number").val(),
-                crossDomain: true,
-                async: true,
-                contentType: 'application/json'
-            }).done(function( data ) {
-                if (data.success_code === true) {
-                    $.each(data.object, function(i, value) {
-                        var new_elem = "<h3><a href='https://s3." + data.region_name + ".amazonaws.com/" + data.bucket_name + "/" + value.key_name + "'>" + value.file_name + "</a> 슬라이싱 동영상</h3>\
-                            <video id='my-video-" + i + "' controls preload='auto' width='640' height='360' data-setup='{}'>\
-                                <source src='https://s3." + data.region_name + ".amazonaws.com/" + data.bucket_name + "/" + value.key_name + "' type='video/mp4'>\
-                                <p class='vjs-no-js'>To view this video please enable JavaScript, and consider upgrading to a web browser that<a href='https://videojs.com/html5-video-support/' target='_blank'>supports HTML5 video</a>\
-                                </p>\
-                            </video>";
-                        elem_body.append(new_elem);
-                    });
-                }
-                else {
-                    console.log(data);
-                    search_person_number();
-                }
-                
-            }).fail(function( data ) {
-                console.log("에러가 발생했습니다. Lambda 함수를 확인해 주세요.");
-                console.log(data);
-            });
-        }
-
-        function search_person_number() {
-            var data = {
-                "from" : 0,
-                "size" : 10000,
-                "query": {
-                    "bool": {
-                        "must": {
-                            "match": {
-                                "DetectedText":$("#person_number").val().toString()
-                            }
-                        },
-                        "filter": {
-                            "range": {
-                                "Confidence": {
-                                    "gte": 80,
-                                    "lte": 100
-                                }
-                            }
-                        }
-                    }
-                },
-                "sort": [
-                    {
-                        "_index": {
-                            "order": "asc"
-                        },
-                        "Sourceframe": {
-                            "order": "asc"
-                        }
-                    }
-                ]
-            }
-
-            $.ajax({
-                method: "POST",
-                url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/_search",
-                crossDomain: true,  
-                async: true,
-                data: JSON.stringify(data),
-                dataType : 'json',
-                contentType: 'application/json'
-            }).done(function( data ) {
-
-                if( data.hits.hits.length > 5) {
-                    elem_body.append("<p>[" + $("#person_number").val() + "] 번에 대한 이미지는 존재하지만 아직 슬라이싱 동영상이 만들어지지 않았습니다.</p>");
-                    elem_body.append('<button type="button" class="btn btn-primary" onclick="request_slicing('+$("#person_number").val()+')">[' + $("#person_number").val() + "] 번에 대한 슬라이싱 동영상 제작 요청하기" + '</button>');
-                }
-                else {
-                    elem_body.append("<p>[" + $("#person_number").val() + "] 해당 번호의 사람은 존재하지 않습니다.</p>");
-                }
-            }).fail(function( data ) {
-                console.log(data);
-            });
-        }
-
-        function request_slicing(request_number) {
-            elem_body.empty();
-            var user_data = {
-                "UserNumber" : request_number
-            }            
-            elem_body.append("<h3>비디오를 제작중입니다. 잠시만 기다려 주세요.</h3>");
-            $.ajax({
-                method: "POST",
-                url: api_url,
-                crossDomain: true,
-                async: true,
-                data: JSON.stringify(user_data),
-                dataType : 'json',
-                contentType: 'application/json',
-            }).done(function( data ) {
-                console.log(data);
-                search_slicing_video_info();
-            }).fail(function( data ) {
-                console.log(data);
-                setTimeout(search_slicing_video_info(), 5);
-            });
-        }
-    </script>
-    
 </body>
 
 </html>

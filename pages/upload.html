@@ -26,6 +26,9 @@
     <!-- Custom CSS -->
     <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
 
+    <!-- Reko Demo JavaScript -->
+    <script src="../js/reko-script.js"></script>
+
     <!-- Morris Charts CSS -->
     <!-- <link href="../vendor/morrisjs/morris.css" rel="stylesheet"> -->
 
@@ -194,10 +197,7 @@
 
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
-
         // Initialize Datatable
-        var table;
-        var cz = 0.5;
         $(document).ready(function() {
             table = $('#marathon-table').DataTable({
                 responsive: true,
@@ -206,87 +206,6 @@
             search_video_info();
         });
     </script>
-
-    <script>
-        // Search number
-        var vod_data = {
-            "from" : 0,
-            "size" : 1,
-            "query": {
-                "bool": {
-                    "filter": {
-                        "range": {
-                            "Sourceframe": {
-                                "gte": 0,
-                                "lte": 1000
-                            }
-                        }
-                    }
-                }
-            },
-            "sort": [
-                {
-                    "Sourceframe": {
-                    "order": "asc"
-                    }
-                }
-            ]
-        }
-
-        function search_video_info() {
-            $.ajax({
-                method: "GET",
-                url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/_all",
-                crossDomain: true,  
-                async: true
-            }).done(function( data ) {
-                console.log(data);
-                table.clear();
-                $.each(data, function(i, recv_data) {
-                    if (i === ".kibana") {
-                        return true;
-                    }
-
-                    $.ajax({
-                        method: "POST",
-                        url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/"+i+"/_search",
-                        crossDomain: true,  
-                        async: true,
-                        data: JSON.stringify(vod_data),
-                        dataType : 'json',
-                        contentType: 'application/json',
-                    }).done(function( image_info ) {
-                        console.log(image_info);
-
-                        $.each(image_info.hits.hits, function(i, recv_data) {
-                            console.log(recv_data._source);
-                            table.row.add(
-                                [
-                                    "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><img id='image_"+i+"'src='"+recv_data._source.ImageUrl+"' class='img-thumbnail' /></a>",
-                                    recv_data._index,
-                                    recv_data._source.VideoLength,
-                                    recv_data._source.SourceVid
-                                    // Math.round( recv_data._source.Confidence * 100) / 100,
-                                    // recv_data._source.DetectId,
-                                    // Math.round( recv_data._source.Left * 100) / 100,
-                                    // Math.round( recv_data._source.Top * 100) / 100,
-                                    // Math.round( recv_data._source.Width * 100) / 100,
-                                    // Math.round( recv_data._source.Height * 100) / 100,
-                                    // recv_data._source.VideoLength,
-                                    // recv_data._source.AssetId                                    
-                                ]
-                            ).draw();
-                        });
-                    });                    
-
-                });
-                    // table.draw();
-            }).fail(function( data ) {
-                console.log(data);
-            });
-        }
-    </script>
-    
 </body>
 
 </html>

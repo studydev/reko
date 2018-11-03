@@ -191,12 +191,12 @@
     <!-- Custom Theme JavaScript -->
     <script src="../dist/js/sb-admin-2.js"></script>
 
+    <!-- Reko Demo JavaScript -->
+    <script src="../js/reko-script.js"></script>
+
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
-
         // Initialize Datatable
-        var table;
-        var cz = 0.5;
         $(document).ready(function() {
             table = $('#marathon-table').DataTable({
                 responsive: true,
@@ -209,121 +209,6 @@
             });
             search_person_number();
         });
-    </script>
-
-    <script>
-        // Search number
-        function search_person_number() {
-            var data = {
-                "from" : 0,
-                "size" : 10000,
-                "query": {
-                    "bool": {
-                        "must": {
-                            "match": {
-                                "DetectedText":$("#person_number").val()
-                            }
-                        },
-                        "filter": {
-                            "range": {
-                                "Confidence": {
-                                    "gte": 80,
-                                    "lte": 100
-                                }
-                            }
-                        }
-                    }
-                },
-                "sort": [
-                    {
-                        "_index": {
-                            "order": "asc"
-                        },
-                        "Sourceframe": {
-                            "order": "asc"
-                        }
-                    }
-                ]
-            }
-            $("#id_name").text($("#person_number").val()+ "번 사람에 대한 검색 정보");
-
-            $.ajax({
-                method: "POST",
-                url: "https://search-devday2018-pxd3jcj3xwwz7ondkzqxcjbnfa.ap-northeast-1.es.amazonaws.com/_search",
-                crossDomain: true,  
-                async: true,
-                data: JSON.stringify(data),
-                dataType : 'json',
-                contentType: 'application/json',
-            }).done(function( data ) {
-                table.clear();
-                if (data.hits.total === 0) {
-                    console.log(data);
-                    table.draw();
-                }
-                else {
-                    $.each(data.hits.hits, function(i, recv_data) {
-                        console.log(recv_data._source);
-
-                        image_url = recv_data._source.ImageUrl;
-                        drawImage(i, image_url, recv_data._source.Left, recv_data._source.Top, recv_data._source.Width, recv_data._source.Height, recv_data._source.DetectedText+" ("+ (Math.round( recv_data._source.Confidence * 100)/100) +"%)");
-
-                        table.row.add(
-                            [
-                                recv_data._source.DetectedText,
-                                recv_data._index,
-                                recv_data._source.Sourceframe,
-                                // Math.round( recv_data._source.Confidence * 100) / 100,
-                                // recv_data._source.DetectId,
-                                // Math.round( recv_data._source.Left * 100) / 100,
-                                // Math.round( recv_data._source.Top * 100) / 100,
-                                // Math.round( recv_data._source.Width * 100) / 100,
-                                // Math.round( recv_data._source.Height * 100) / 100,
-                                // recv_data._source.VideoLength,
-                                // recv_data._source.AssetId,
-                                // "<a href='"+recv_data._source.ImageUrl+"' target='_blank'><img id='image_"+i+"'src='"+recv_data._source.ImageUrl+"' class='img-fluid img-thumbnail' /></a>",
-                                "<a href='"+image_url+"' target='_blank'><canvas id='myCanvas_"+i+"' width='"+(1280*cz)+"' height="+(720*cz)+" >Your browser does not support the HTML5 canvas tag.</canvas></a>",
-                            ]
-                        );
-                    });
-                    table.draw();
-                }
-            }).fail(function( data ) {
-                table.clear();
-                console.log(data);
-                table.draw();
-            });
-        }
-        
-        // draw rectangle for person information over canvas
-        function drawImage(i, url, x, y, w, h, text){   
-            var img = new Image();
-            img.onload = function(){
-                console.log( this.width+' '+ this.height );
-                var rx = this.width*cz;
-                var ry = this.height*cz;
-                var c=document.getElementById("myCanvas_"+i);
-                var ctx=c.getContext("2d");
-                ctx.drawImage(img,0,0, rx, ry);
-
-                ctx.font = "bold " + (36*cz) + "px Arial";
-                ctx.fillStyle = "orange";
-                ctx.fillText(text, rx*x-3, ry*y-10);
-
-                var canvas = document.getElementById("myCanvas_"+i);
-                var context = canvas.getContext('2d');
-                
-                context.beginPath();
-                context.rect(rx*x-3, ry*y-3, rx*w+9, ry*h+9);
-                context.lineWidth = 6;
-                context.strokeStyle = 'red';
-                context.stroke();
-            };
-            img.src = url;
-        }
-
-        
-
     </script>
     
 </body>

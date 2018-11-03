@@ -4,8 +4,19 @@
 VOD 동영상을 [S3](https://aws.amazon.com/ko/s3/)에 업로드하면, [Lambda](https://aws.amazon.com/ko/lambda/)에서 [Elemental MediaConvert](https://aws.amazon.com/ko/mediaconvert/)를 호출하여 대량의 이미지로 분할하여 [S3](https://aws.amazon.com/ko/s3/)에 저장합니다. 대량의 이미지는 [Lambda](https://aws.amazon.com/ko/lambda/)를 활용하여 [Rekognition](https://aws.amazon.com/ko/rekognition/) 서비스를 호출하여 이미지 정보를 수집합니다. 수집 결과물은 [ElasticSearch](https://aws.amazon.com/ko/elasticsearch-service/)에 저장하고 Kibana를 통해 시각화 할 수 있습니다.
 
 ## 아키텍처 다이어그램
-해당 다이어그램은 미완성 입니다. (2018-10-30 완료 예정)
 ![Reko 아키텍처 다이어그램](https://github.com/studydev/reko/raw/master/img/reko_architecture.png)
+
+## 아키텍처 다이어그램 부분 설명
+해당 아키텍처는 크게 4가지 부분으로 나누어서 설명할 수 있으며, 이 Repository는 4번째에 해당하는 정접 웹 페이지에 대한 소스입니다.
+
+1. 동영상을 이미지로 변환
+![동영상을 이미지로 변환](https://github.com/studydev/reko/raw/master/img/reko_architecture_001.png)
+1. 이미지에서 컨텍스트를 정보를 추출 및 저장
+![이미지에서 컨텍스트를 정보를 추출 및 저장](https://github.com/studydev/reko/raw/master/img/reko_architecture_002.png)
+1. 클립핑 동영상 제작 및 수집
+![클립핑 동영상 제작 및 수집](https://github.com/studydev/reko/raw/master/img/reko_architecture_003.png)
+1. 정적 웹페이지
+![정적 웹페이지](https://github.com/studydev/reko/raw/master/img/reko_architecture_004.png)
 
 
 ## 시작하기
@@ -13,7 +24,8 @@ VOD 동영상을 [S3](https://aws.amazon.com/ko/s3/)에 업로드하면, [Lambda
 이 템플릿을 시작하기 위해서는 다음과 같은 순서로 진행합니다:
 * [최신 버전의 git repo 다운로드 받기](https://github.com/studydev/reko)
 * Clone the repo: `git clone https://github.com/studydev/reko.git`
-* Fork the repo
+* 정접 웹 호스팅용 S3에 배포하기
+* 1~3번에 대한 내용에 대한 실습 자료는 추가될 예정입니다.
 
 ## 실습 순서
 

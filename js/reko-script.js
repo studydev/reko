@@ -220,7 +220,7 @@ function search_crop_video_info() {
 function done_search_crop_video_info(data) {
     if (data.success_code === true) {
         $.each(data.object, function(i, value) {
-            var new_elem = "<h3><a href='https://s3." + data.region_name + ".amazonaws.com/" + data.bucket_name + "/" + value.key_name + "'>" + value.file_name + "</a> 슬라이싱 동영상</h3>\
+            var new_elem = "<h3><a href='https://s3." + data.region_name + ".amazonaws.com/" + data.bucket_name + "/" + value.key_name + "'>" + value.file_name + "</a> 클립 동영상</h3>\
                 <video id='my-video-" + i + "' controls preload='auto' width='640' height='360' data-setup='{}'>\
                     <source src='https://s3." + data.region_name + ".amazonaws.com/" + data.bucket_name + "/" + value.key_name + "' type='video/mp4'>\
                     <p class='vjs-no-js'>To view this video please enable JavaScript, and consider upgrading to a web browser that<a href='https://videojs.com/html5-video-support/' target='_blank'>supports HTML5 video</a>\
@@ -253,8 +253,8 @@ function search_crop_video() {
         contentType: 'application/json'
     }).done(function( data ) {
         if( data.hits.hits.length > 5) {
-            elem_body.append("<p>[" + seach_number + "] 번에 대한 이미지는 존재하지만 아직 슬라이싱 동영상이 만들어지지 않았습니다.</p>");
-            elem_body.append('<button type="button" class="btn btn-primary" onclick="request_crop('+ seach_number +')">[' + seach_number + "] 번에 대한 슬라이싱 동영상 제작 요청하기" + '</button>');
+            elem_body.append("<p>[" + seach_number + "] 번에 대한 이미지는 존재하지만 아직 클립 동영상이 만들어지지 않았습니다.</p>");
+            elem_body.append('<button type="button" class="btn btn-primary" onclick="request_crop('+ seach_number +')">[' + seach_number + "] 번에 대한 클립 동영상 제작 요청하기" + '</button>');
         }
         else {
             elem_body.append("<p>[" + seach_number + "] 해당 번호의 사람은 존재하지 않습니다.</p>");
@@ -273,18 +273,17 @@ function request_crop(request_number) {
     elem_body.append("<h3>비디오를 제작중입니다. 잠시만 기다려 주세요.</h3>");
     $.ajax({
         method: "POST",
-        url: api_url,
-        crossDomain: true,
-        async: true,
+        url: APIGatewayURL,
         data: JSON.stringify(user_data),
-        dataType : 'json',
-        contentType: 'application/json',
+        contentType: 'application/json; charset=utf-8',
     }).done(function( data ) {
+        console.log("Job Success");
         console.log(data);
-        search_crop_video_info();
+        setTimeout(search_crop_video_info, 12000);
     }).fail(function( data ) {
+        console.log("Job fail");
         console.log(data);
-        setTimeout(search_crop_video_info(), 5);
+        setTimeout(search_crop_video_info, 1000);
     });
 }
 
@@ -388,3 +387,11 @@ function image_step_backward() {
 function remove_image_timer() {
     clearInterval(player_timer);
 }
+
+$(document)
+    .ajaxStart(function () {
+        $('#my-spinner').show();
+    })
+    .ajaxStop(function () {
+        $('#my-spinner').hide();
+});

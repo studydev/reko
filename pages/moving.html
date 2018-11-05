@@ -85,7 +85,7 @@
                             <div class="input-group custom-search-form">
                                 <input id="person_number" type="text" class="form-control" placeholder="참가자 번호 입력..." value="4040">
                                 <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" onclick="search_person_number()">
+                                <button class="btn btn-default" type="button" onclick="search_animation_person_number()">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
@@ -102,7 +102,7 @@
                             <a href="moving.html"><i class="fa fa-play-circle fa-fw"></i> 인식 이미지 재생</a>
                         </li>
                         <li>
-                            <a href="slicing.html"><i class="fa fa-video-camera fa-fw"></i> 슬라이싱 동영상</a>
+                            <a href="slicing.html"><i class="fa fa-video-camera fa-fw"></i> 클립 동영상</a>
                         </li>
                     </ul>
                 </div>
@@ -151,6 +151,16 @@
     </div>
     <!-- /#wrapper -->
 
+    <!-- #spinner -->
+    <div id='my-spinner'>
+        <div>
+            <span>
+                <img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+            </span>
+        </div>
+    </div>
+    <!-- /#spinner -->
+
     <!-- jQuery -->
     <script src="../vendor/jquery/jquery.min.js"></script>
 
@@ -183,6 +193,11 @@
         $(document).ready(function() {
             search_animation_person_number();
         });
+        $('#person_number').keydown(function (e){
+            if(e.keyCode == 13){
+                search_animation_person_number();
+            }
+        })
     </script>
 
 </body>

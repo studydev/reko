@@ -105,7 +105,7 @@
                             <a href="moving.html"><i class="fa fa-play-circle fa-fw"></i> 인식 이미지 재생</a>
                         </li>
                         <li>
-                            <a href="slicing.html"><i class="fa fa-video-camera fa-fw"></i> 슬라이싱 동영상</a>
+                            <a href="slicing.html"><i class="fa fa-video-camera fa-fw"></i> 클립 동영상</a>
                         </li>
                     </ul>
                 </div>
@@ -173,6 +173,16 @@
     </div>
     <!-- /#wrapper -->
 
+    <!-- #spinner -->
+    <div id='my-spinner'>
+        <div>
+            <span>
+                <img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+            </span>
+        </div>
+    </div>
+    <!-- /#spinner -->
+
     <!-- jQuery -->
     <script src="../vendor/jquery/jquery.min.js"></script>
 
@@ -205,6 +215,11 @@
             });
             search_video_info();
         });
+        $('#person_number').keydown(function (e){
+            if(e.keyCode == 13){
+                search_video_info();
+            }
+        })
     </script>
 </body>
 

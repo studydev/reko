@@ -80,7 +80,7 @@
                             <div class="input-group custom-search-form">
                                 <input id="person_number" type="text" class="form-control" placeholder="참가자 번호 입력..." value="4040">
                                 <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" onclick="search_slicing_video_info()">
+                                <button class="btn btn-default" type="button" onclick="search_crop_video_info()">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
@@ -97,7 +97,7 @@
                             <a href="moving.html"><i class="fa fa-play-circle fa-fw"></i> 인식 이미지 재생</a>
                         </li>
                         <li>
-                            <a href="slicing.html"><i class="fa fa-video-camera fa-fw"></i> 슬라이싱 동영상</a>
+                            <a href="slicing.html"><i class="fa fa-video-camera fa-fw"></i> 클립 동영상</a>
                         </li>
                     </ul>
                 </div>
@@ -109,7 +109,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">참가자 슬라이싱 동영상</h1>
+                    <h1 class="page-header">참가자 클립 동영상</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -118,7 +118,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div id="id_name" class="panel-heading">
-                            슬라이싱 동영상
+                            클립 동영상
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -136,6 +136,16 @@
 
     </div>
     <!-- /#wrapper -->
+
+    <!-- #spinner -->
+    <div id='my-spinner'>
+        <div>
+            <span>
+              <img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+            </span>
+        </div>
+    </div>
+    <!-- /#spinner -->
 
     <!-- jQuery -->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -171,6 +181,11 @@
         $(document).ready(function() {
             search_crop_video_info();
         });
+        $('#person_number').keydown(function (e){
+            if(e.keyCode == 13){
+                search_crop_video_info();
+            }
+        })
     </script>
 </body>
 

@@ -432,3 +432,27 @@ table.dataTable thead .sorting:after {
     border-left-width: 0;
   }
 }
+
+/* spinner */
+#my-spinner {
+  width: 100%; height: 100%;
+  top: 0; left: 0;
+  display: none;
+  opacity: .6;
+  background: silver;
+  position: fixed;
+}
+#my-spinner div {
+  width: 100%; height: 100%;
+  display: table;
+}
+#my-spinner span {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+#my-spinner img {
+  background: white;
+  padding: 1em;
+  border-radius: .7em;
+}
